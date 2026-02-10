@@ -1,23 +1,35 @@
+import google.generativeai as genai
 from openai import OpenAI
 import os
 import logging
 from typing import List, Dict
 
 class NewsSummarizer:
-    def __init__(self, model="gpt-4-turbo"):
-        self.api_key = os.getenv("OPENAI_API_KEY")
-        if not self.api_key:
-            logging.warning("OPENAI_API_KEY not found. Summarization will be skipped.")
-            self.client = None
-        else:
-            self.client = OpenAI(api_key=self.api_key)
+    def __init__(self, provider="openai", model="gpt-4-turbo"):
+        self.provider = provider
         self.model = model
+        self.client = None
+
+        if self.provider == "openai":
+            self.api_key = os.getenv("OPENAI_API_KEY")
+            if not self.api_key:
+                logging.warning("OPENAI_API_KEY not found.")
+            else:
+                self.client = OpenAI(api_key=self.api_key)
+        
+        elif self.provider == "gemini":
+            self.api_key = os.getenv("GEMINI_API_KEY")
+            if not self.api_key:
+                logging.warning("GEMINI_API_KEY not found.")
+            else:
+                genai.configure(api_key=self.api_key)
+                # Gemini client is the module itself + model instance
 
     def summarize_category(self, category: str, articles: List[Dict]) -> str:
         """
         Summarizes a list of articles/videos for a specific category into a concise bulleted list.
         """
-        if not self.client or not articles:
+        if not articles:
             return f"No summary available for {category}."
 
         # Prepare context for LLM
@@ -50,16 +62,26 @@ class NewsSummarizer:
         """
 
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that summarizes news."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=1000,
-                temperature=0.5
-            )
-            return response.choices[0].message.content.strip()
+            if self.provider == "openai" and self.client:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": "You are a helpful assistant that summarizes news."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=1000,
+                    temperature=0.5
+                )
+                return response.choices[0].message.content.strip()
+            
+            elif self.provider == "gemini" and self.api_key:
+                model = genai.GenerativeModel(self.model)
+                response = model.generate_content(prompt)
+                return response.text.strip()
+                
+            else:
+                return "LLM Provider not configured or specific API Key missing."
+
         except Exception as e:
             logging.error(f"Failed to generate summary for {category}: {e}")
             return "Summary generation failed."

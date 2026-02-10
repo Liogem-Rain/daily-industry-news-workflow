@@ -59,11 +59,13 @@ def run_crawlers(sources: List[Dict]) -> List[Dict]:
     return results
 
 
-def generate_report(articles: List[Dict], output_conf: Dict):
+def generate_report(articles: List[Dict], output_conf: Dict, summary_conf: Dict):
     report_path = output_conf.get('path', 'daily_news_summary.md')
     
-    # Initialize Summarizer
-    summarizer = NewsSummarizer()
+    # Initialize Summarizer with config
+    provider = summary_conf.get('provider', 'openai')
+    model = summary_conf.get('model', 'gpt-4-turbo')
+    summarizer = NewsSummarizer(provider=provider, model=model)
     
     # Group by category manually for processing
     grouped_articles = {}
@@ -93,7 +95,7 @@ def generate_report(articles: List[Dict], output_conf: Dict):
 def job():
     config = load_config()
     articles = run_crawlers(config['sources'])
-    generate_report(articles, config['output'])
+    generate_report(articles, config['output'], config.get('summary', {}))
     print("Job completed successfully.")
 
 if __name__ == "__main__":

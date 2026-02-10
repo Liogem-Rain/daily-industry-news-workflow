@@ -71,5 +71,5 @@ output:
 
 summary:
   enabled: true
-  provider: "openai" # Options: openai, deepseek (if compatible API)
-  model: "gpt-4-turbo"
+  provider: "gemini" # Options: openai, gemini
+  model: "gemini-1.5-flash"
