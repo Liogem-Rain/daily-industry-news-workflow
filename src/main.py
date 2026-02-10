@@ -6,7 +6,11 @@ import datetime
 from typing import List, Dict
 from src.crawlers.base import RSSCrawler, BaseCrawler
 from src.crawlers.youtube import YouTubeCrawler
-from src.summary import NewsSummarizer # Import summarizer
+from src.summary import NewsSummarizer
+from dotenv import load_dotenv
+
+# Load environment variables (e.g., from .env file for local dev)
+load_dotenv()
 
 def load_config(config_path="config.yaml"):
     try:

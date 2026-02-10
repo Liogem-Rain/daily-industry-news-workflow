@@ -30,6 +30,7 @@ jobs:
         run: python -m src.main
         env:
           CI: true
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
