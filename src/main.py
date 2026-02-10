@@ -5,7 +5,8 @@ import os
 import datetime
 from typing import List, Dict
 from src.crawlers.base import RSSCrawler, BaseCrawler
-from src.crawlers.youtube import YouTubeCrawler # Import the new crawler
+from src.crawlers.youtube import YouTubeCrawler
+from src.summary import NewsSummarizer # Import summarizer
 
 def load_config(config_path="config.yaml"):
     try:
@@ -27,64 +28,58 @@ def run_crawlers(sources: List[Dict]) -> List[Dict]:
         crawl_type = source_conf.get('type')
         name = source_conf.get('name')
         category = source_conf.get('category', 'General')
-        limit = source_conf.get('limit', 5)
+        limit = source_conf.get('limit', 10) # Default to 10
 
         try:
-            if crawl_type == 'rss':
+            if crawl_type == 'youtube':
+                query = source_conf.get('query')
+                # Fetch transcripts for better summarization
+                crawler = YouTubeCrawler(name, query, limit=limit, fetch_transcript=True)
+                videos = crawler.fetch_articles()
+                for v in videos:
+                    v['category'] = category
+                results.extend(videos)
+            
+            else:
+                # Keep RSS fallback logic if needed
                 url = source_conf.get('url')
                 crawler = RSSCrawler(name, url)
                 articles = crawler.run()
                 for a in articles:
                     a['category'] = category
                 results.extend(articles)
-            
-            elif crawl_type == 'youtube':
-                query = source_conf.get('query')
-                crawler = YouTubeCrawler(name, query, limit=limit)
-                videos = crawler.run()
-                for v in videos:
-                    v['category'] = category
-                    v['is_video'] = True
-                results.extend(videos)
-                
-            else:
-                print(f"Unknown crawler type: {crawl_type} for {name}")
                 
         except Exception as e:
             print(f"Crawler failed for {name}: {e}")
             
     return results
 
+
 def generate_report(articles: List[Dict], output_conf: Dict):
-    report_format = output_conf.get('format', 'markdown')
-    report_path = output_conf.get('path', 'daily_news_report.md')
+    report_path = output_conf.get('path', 'daily_news_summary.md')
     
-    # Sort by category then date
-    articles.sort(key=lambda x: (x.get('category', ''), x.get('date', '')))
+    # Initialize Summarizer
+    summarizer = NewsSummarizer()
     
-    content = f"# Daily Industry News Report\nGenerated on: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-    
-    # Group by category manually for cleaner output
+    # Group by category manually for processing
     grouped_articles = {}
     for article in articles:
         cat = article.get('category', 'General')
         if cat not in grouped_articles:
             grouped_articles[cat] = []
         grouped_articles[cat].append(article)
-
+    
+    content = f"# 每日行业热点总结\n生成时间: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+    
+    # Define category order if possible from config (need to pass config down later, but simple sort works for now)
+    # Or just iterate gathered categories
+    
     for cat, items in grouped_articles.items():
-        content += f"## {cat}\n\n"
-        for idx, article in enumerate(items, 1):
-            title = article.get('title', 'No Title')
-            url = article.get('url', '#')
-            summary = article.get('summary', '')
-            thumbnail = article.get('thumbnail')
-            
-            content += f"### {idx}. [{title}]({url})\n"
-            if thumbnail:
-                content += f"[![Thumbnail]({thumbnail})]({url})\n"
-            content += f"**Details**: {summary}\n\n"
-        content += "---\n"
+        print(f"Summarizing category: {cat} with {len(items)} items...")
+        summary_text = summarizer.summarize_category(cat, items)
+        
+        content += f"## {cat}\n"
+        content += f"{summary_text}\n\n"
         
     with open(report_path, 'w') as f:
         f.write(content)

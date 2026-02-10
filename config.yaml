@@ -1,34 +1,75 @@
 sources:
-  - name: "Tech Trends"
+  - name: "科技 (Technology)"
     type: "youtube"
     query: "Technology News 2024"
-    category: "Technology"
-    limit: 5
+    category: "科技"
+    limit: 10
 
-  - name: "Finance Updates"
+  - name: "AI (Artificial Intelligence)"
     type: "youtube"
-    query: "Global Finance News This Week"
-    category: "Finance"
-    limit: 5
+    query: "Artificial Intelligence News This Week"
+    category: "AI"
+    limit: 10
 
-  - name: "Healthcare Breakthroughs"
+  - name: "金融 (Finance)"
     type: "youtube"
-    query: "Healthcare News Today"
-    category: "Healthcare"
-    limit: 5
+    query: "Global Finance Market News"
+    category: "金融"
+    limit: 10
 
-  - name: "Energy Sector"
+  - name: "医疗 (Healthcare)"
     type: "youtube"
-    query: "Energy Industry News Today"
-    category: "Energy"
-    limit: 5
+    query: "Healthcare Medical Breakthrough News"
+    category: "医疗"
+    limit: 10
 
-  - name: "Automotive Industry"
+  - name: "新能源 (New Energy)"
     type: "youtube"
-    query: "Automotive News This Week"
-    category: "Automotive"
-    limit: 5
+    query: "Renewable Energy News Solar Wind Battery"
+    category: "新能源"
+    limit: 10
+
+  - name: "生物技术 (Biotech)"
+    type: "youtube"
+    query: "Biotechnology Industry News"
+    category: "生物技术"
+    limit: 10
+
+  - name: "算力与半导体 (Semiconductors)"
+    type: "youtube"
+    query: "Semiconductor Chips NVIDIA AMD Intel News"
+    category: "算力与半导体"
+    limit: 10
+
+  - name: "先进制造 (Advanced Manufacturing)"
+    type: "youtube"
+    query: "Advanced Manufacturing Robotics Industry 4.0"
+    category: "先进制造"
+    limit: 10
+
+  - name: "低空经济 (Low Altitude Economy)"
+    type: "youtube"
+    query: "eVTOL Drone Delivery Air Taxi News"
+    category: "低空经济"
+    limit: 10
+
+  - name: "量子科技 (Quantum Tech)"
+    type: "youtube"
+    query: "Quantum Computing News Breakthrough"
+    category: "量子科技"
+    limit: 10
+
+  - name: "合成生物学 (Synthetic Biology)"
+    type: "youtube"
+    query: "Synthetic Biology News"
+    category: "合成生物学"
+    limit: 10
 
 output:
   format: "markdown"
-  path: "daily_news_report.md"
+  path: "daily_news_summary.md"
+
+summary:
+  enabled: true
+  provider: "openai" # Options: openai, deepseek (if compatible API)
+  model: "gpt-4-turbo"

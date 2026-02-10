@@ -6,3 +6,5 @@ python-dotenv
 pyyaml
 lxml
 youtube-search-python
+youtube-transcript-api
+openai
