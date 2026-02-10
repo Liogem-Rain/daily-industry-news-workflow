@@ -23,11 +23,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r InformationCatch/requirements.txt
 
       - name: Run Crawler
         # The script detects CI=true and runs once without infinite loop
-        run: python -m src.main
+        run: |
+          cd InformationCatch
+          python -m src.main
         env:
           CI: true
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -35,5 +37,5 @@ jobs:
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "chore: update daily news report [skip ci]"
-          file_pattern: daily_news_summary.md
+          commit_message: "chore: update daily news summary [skip ci]"
+          file_pattern: InformationCatch/daily_news_summary.md
