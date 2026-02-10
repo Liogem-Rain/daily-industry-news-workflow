@@ -1,0 +1,8 @@
+requests
+beautifulsoup4
+feedparser
+schedule
+python-dotenv
+pyyaml
+lxml
+youtube-search-python

@@ -1,0 +1,34 @@
+sources:
+  - name: "Tech Trends"
+    type: "youtube"
+    query: "Technology News 2024"
+    category: "Technology"
+    limit: 5
+
+  - name: "Finance Updates"
+    type: "youtube"
+    query: "Global Finance News This Week"
+    category: "Finance"
+    limit: 5
+
+  - name: "Healthcare Breakthroughs"
+    type: "youtube"
+    query: "Healthcare News Today"
+    category: "Healthcare"
+    limit: 5
+
+  - name: "Energy Sector"
+    type: "youtube"
+    query: "Energy Industry News Today"
+    category: "Energy"
+    limit: 5
+
+  - name: "Automotive Industry"
+    type: "youtube"
+    query: "Automotive News This Week"
+    category: "Automotive"
+    limit: 5
+
+output:
+  format: "markdown"
+  path: "daily_news_report.md"
