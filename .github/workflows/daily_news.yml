@@ -36,4 +36,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "chore: update daily news report [skip ci]"
-          file_pattern: daily_news_report.md
+          file_pattern: daily_news_summary.md
